@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealer Evaluation</title>
+</head>
+<body>
+    <h1>Dealer Evaluation</h1>
+
+    <label for="products">Select a product:</label>
+    <select id="products">
+        <!-- Aici vor fi încărcate produsele din API -->
+    </select>
+
+    <label for="dealers">Select a dealer:</label>
+    <select id="dealers">
+        <!-- Aici vor fi încărcați dealerii -->
+    </select>
+
+    <label for="price">Price:</label>
+    <p id="price">-</p>
+
+    <script>
+        const productUrl = 'https://<product-details-service-url>/product-details';
+        const dealerUrl = 'https://<dealer-pricing-service-url>/dealer-pricing';
+
+        // Încărcarea produselor
+        fetch(productUrl)
+            .then(response => response.json())
+            .then(data => {
+                const productsDropdown = document.getElementById('products');
+                data.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.text = product.name;
+                    productsDropdown.appendChild(option);
+                });
+            });
+
+        // Încărcarea dealerilor și prețului
+        document.getElementById('products').addEventListener('change', function() {
+            const productId = this.value;
+            fetch(dealerUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const dealersDropdown = document.getElementById('dealers');
+                    dealersDropdown.innerHTML = '';
+                    data.forEach(dealer => {
+                        const option = document.createElement('option');
+                        option.value = dealer.name;
+                        option.text = dealer.name;
+                        dealersDropdown.appendChild(option);
+                    });
+                });
+        });
+
+        // Afișarea prețului când un dealer este selectat
+        document.getElementById('dealers').addEventListener('change', function() {
+            const selectedDealer = this.value;
+            fetch(dealerUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const dealer = data.find(d => d.name === selectedDealer);
+                    document.getElementById('price').textContent = dealer ? dealer.price : '-';
+                });
+        });
+    </script>
+</body>
+</html>
