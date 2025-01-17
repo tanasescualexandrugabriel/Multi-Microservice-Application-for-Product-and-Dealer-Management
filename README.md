@@ -27,4 +27,4 @@ Cloud-Driven Deployment:
 🌩️ All microservices are deployed on IBM Cloud Code Engine, ensuring optimal performance and scalability for modern cloud-native applications.
 This project exemplifies the power of microservice architecture in creating modular, maintainable, and efficient applications. It highlights the practical use of Python and cloud technologies to deliver real-world solutions.
 
-Let me know if you'd like further refinements! 😊
+
