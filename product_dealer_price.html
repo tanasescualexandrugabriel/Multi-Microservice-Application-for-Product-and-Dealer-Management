@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Dealer Price</title>
+</head>
+<body>
+    <h1>Select a Dealer to View Price</h1>
+
+    <label for="products">Select a product:</label>
+    <select id="products">
+        <!-- Products will be loaded here -->
+    </select>
+
+    <label for="dealers">Select a dealer:</label>
+    <select id="dealers">
+        <!-- Dealers will be loaded here -->
+    </select>
+
+    <label for="price">Price offered by the selected dealer:</label>
+    <p id="price">-</p>
+
+    <script>
+        const productUrl = 'https://<product-details-service-url>/product-details';
+        const dealerUrl = 'https://<dealer-pricing-service-url>/dealer-pricing';
+
+        // Fetch and load products into the dropdown
+        fetch(productUrl)
+            .then(response => response.json())
+            .then(data => {
+                const productsDropdown = document.getElementById('products');
+                data.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.text = product.name;
+                    productsDropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching product details:', error));
+
+        // Fetch and load dealers based on the selected product
+        document.getElementById('products').addEventListener('change', function() {
+            const selectedProductId = this.value;
+            if (selectedProductId) {
+                fetch(`${dealerUrl}?product_id=${selectedProductId}`)
+                    .then(response => response.json())
+                    .then(dealers => {
+                        const dealersDropdown = document.getElementById('dealers');
+                        dealersDropdown.innerHTML = ''; // Clear previous dealer list
+                        dealers.forEach(dealer => {
+                            const option = document.createElement('option');
+                            option.value = dealer.name;
+                            option.text = dealer.name;
+                            dealersDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching dealers:', error));
+            }
+        });
+
+        // Display the price when a dealer is selected
+        document.getElementById('dealers').addEventListener('change', function() {
+            const selectedDealer = this.value;
+            fetch(`${dealerUrl}?dealer_name=${selectedDealer}`)
+                .then(response => response.json())
+                .then(dealer => {
+                    const price = dealer ? dealer.price : 'Price not available';
+                    document.getElementById('price').textContent = price;
+                })
+                .catch(error => console.error('Error fetching dealer price:', error));
+        });
+    </script>
+</body>
+</html>
